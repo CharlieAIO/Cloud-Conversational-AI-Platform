@@ -33,17 +33,16 @@ jobs:
       - name: Create Elastic Beanstalk Application Version
         run: |
           aws elasticbeanstalk create-application-version \
-            --application-name $EB_APPLICATION_NAME \
-            --version-label $GITHUB_SHA \
-            --source-bundle S3Bucket=$S3_BUCKET_NAME,S3Key=$DUMMY_S3_KEY
+          --application-name $EB_APPLICATION_NAME \
+          --version-label $GITHUB_SHA \
+          --source-bundle S3Bucket=$S3_BUCKET_NAME,S3Key=dockerrun.zip
 
       - name: Deploy to Elastic Beanstalk Environment
         run: |
           aws elasticbeanstalk update-environment \
-            --application-name $EB_APPLICATION_NAME \
-            --environment-name $EB_ENVIRONMENT_NAME \
-            --version-label $GITHUB_SHA \
-            --option-settings Namespace=aws:elasticbeanstalk:container:docker,OptionName=Image,Value=$ECR_IMAGE_URI
+          --application-name $EB_APPLICATION_NAME \
+          --environment-name $EB_ENVIRONMENT_NAME \
+          --version-label $GITHUB_SHA
 
       - name: Wait for Environment Update
         run: |
