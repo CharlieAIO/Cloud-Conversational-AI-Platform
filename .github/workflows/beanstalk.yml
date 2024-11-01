@@ -13,9 +13,9 @@ jobs:
       ECR_IMAGE_URI: ${{ secrets.ECR_URI }}:latest
       S3_BUCKET_NAME: elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ secrets.AWS_ACCOUNT_ID }}
       DUMMY_S3_KEY: "artifact/dummy-bundle.zip"
-      EB_APPLICATION_NAME: your-application-name
-      EB_ENVIRONMENT_NAME: your-environment-name
-
+      EB_APPLICATION_NAME: CloudConversational
+      EB_ENVIRONMENT_NAME: CloudConversational-env
+    
     steps:
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
