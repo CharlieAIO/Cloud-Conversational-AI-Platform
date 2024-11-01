@@ -26,7 +26,7 @@ jobs:
 
       - name: Push dockerrun.zip to S3
         run: |
-          zip deployment.zip Dockerrun.aws.json
+          zip dockerrun.zip Dockerrun.aws.json
           aws s3 cp dockerrun.zip s3://$S3_BUCKET_NAME/$S3_KEY
           
       - name: Verify S3 Upload
