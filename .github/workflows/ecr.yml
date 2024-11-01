@@ -9,7 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      ECR_NAME: cc-ai-backend
+      ECR_NAME: cloudai-backend
 
     steps:
       - name: Checkout code

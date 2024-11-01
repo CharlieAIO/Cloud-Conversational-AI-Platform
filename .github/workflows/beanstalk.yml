@@ -11,7 +11,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      ECR_NAME: cc-ai-backend
+      ECR_NAME: cloudai-backend
       EB_ENVIRONMENT_ID: e-kxwpzmmubk
       ECR_IMAGE_URI: ${{ secrets.ECR_URI }}:latest
     
