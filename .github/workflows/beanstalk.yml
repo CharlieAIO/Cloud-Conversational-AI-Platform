@@ -12,7 +12,7 @@ jobs:
     env:
       ECR_IMAGE_URI: ${{ secrets.ECR_URI }}:latest
       S3_BUCKET_NAME: elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ secrets.AWS_ACCOUNT_ID }}
-      DUMMY_S3_KEY: "artifact/dummy-bundle.zip"
+      S3_KEY: "artifact/dockerrun.zip"
       EB_APPLICATION_NAME: CloudConversational
       EB_ENVIRONMENT_NAME: CloudConversational-env
     
@@ -27,21 +27,25 @@ jobs:
       - name: Push dockerrun.zip to S3
         run: |
           zip deployment.zip Dockerrun.aws.json
-          aws s3 cp deployment.zip s3://$S3_BUCKET_NAME/dockerrun.zip
+          aws s3 cp dockerrun.zip s3://$S3_BUCKET_NAME/$S3_KEY
+          
+      - name: Verify S3 Upload
+        run: |
+          aws s3 ls s3://$S3_BUCKET_NAME/$S3_KEY
 
       - name: Create Elastic Beanstalk Application Version
         run: |
           aws elasticbeanstalk create-application-version \
-          --application-name $EB_APPLICATION_NAME \
-          --version-label $GITHUB_SHA \
-          --source-bundle S3Bucket=$S3_BUCKET_NAME,S3Key=dockerrun.zip
+            --application-name $EB_APPLICATION_NAME \
+            --version-label $GITHUB_SHA \
+            --source-bundle S3Bucket=$S3_BUCKET_NAME,S3Key=$S3_KEY
 
       - name: Deploy to Elastic Beanstalk Environment
         run: |
           aws elasticbeanstalk update-environment \
-          --application-name $EB_APPLICATION_NAME \
-          --environment-name $EB_ENVIRONMENT_NAME \
-          --version-label $GITHUB_SHA
+            --application-name $EB_APPLICATION_NAME \
+            --environment-name $EB_ENVIRONMENT_NAME \
+            --version-label $GITHUB_SHA
 
       - name: Wait for Environment Update
         run: |
