@@ -24,11 +24,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Create Dummy ZIP for Application Version
+      - name: Push dockerrun.zip to S3
         run: |
-          echo "dummy file" > dummy.txt
-          zip dummy-bundle.zip dummy.txt
-          aws s3 cp dummy-bundle.zip s3://$S3_BUCKET_NAME/$DUMMY_S3_KEY
+          zip deployment.zip Dockerrun.aws.json
+          aws s3 cp deployment.zip s3://$S3_BUCKET_NAME/dockerrun.zip
 
       - name: Create Elastic Beanstalk Application Version
         run: |
