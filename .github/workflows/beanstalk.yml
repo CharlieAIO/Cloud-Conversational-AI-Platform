@@ -10,12 +10,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      ECR_IMAGE_URI: ${{ secrets.ECR_URI }}:latest
-      S3_BUCKET_NAME: elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ secrets.AWS_ACCOUNT_ID }}
+      ECR_IMAGE_URI: ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPOSITORY }}:latest
+      S3_BUCKET_NAME: elasticbeanstalk-${{ vars.AWS_REGION }}-${{ vars.AWS_ACCOUNT_ID }}
       S3_KEY: "artifact/dockerrun.zip"
-      EB_APPLICATION_NAME: CloudConversational
-      EB_ENVIRONMENT_NAME: CloudConversational-env
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -26,7 +24,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ vars.AWS_REGION }}
 
       - name: Push dockerrun.zip to S3
         run: |
@@ -40,7 +38,7 @@ jobs:
       - name: Create Elastic Beanstalk Application Version
         run: |
           aws elasticbeanstalk create-application-version \
-            --application-name $EB_APPLICATION_NAME \
+            --application-name ${{ vars.EB_APPLICATION_NAME }} \
             --version-label $GITHUB_SHA \
             --source-bundle S3Bucket=$S3_BUCKET_NAME,S3Key=$S3_KEY
           
@@ -48,13 +46,13 @@ jobs:
       - name: Deploy to Elastic Beanstalk Environment
         run: |
           aws elasticbeanstalk update-environment \
-            --application-name $EB_APPLICATION_NAME \
-            --environment-name $EB_ENVIRONMENT_NAME \
+            --application-name ${{ vars.EB_APPLICATION_NAME }} \
+            --environment-name ${{ vars.EB_ENVIRONMENT_NAME }} \
             --version-label $GITHUB_SHA \
             --option-settings Namespace=aws:elasticbeanstalk:application:environment,OptionName=OPENAI_API_KEY,Value=${{ secrets.OPENAI_API_KEY }}
 
       - name: Wait for Environment Update
         run: |
           aws elasticbeanstalk wait environment-updated \
-            --application-name $EB_APPLICATION_NAME \
-            --environment-name $EB_ENVIRONMENT_NAME
+            --application-name ${{ vars.EB_APPLICATION_NAME }} \
+            --environment-name ${{ vars.EB_ENVIRONMENT_NAME }}

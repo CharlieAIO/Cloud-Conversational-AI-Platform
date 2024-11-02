@@ -9,7 +9,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      ECR_NAME: cloudai-backend
+      ECR_NAME: ${{ vars.ECR_REPOSITORY }}
+      ECR_BASE_URI: ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
 
     steps:
       - name: Checkout code
@@ -24,7 +25,7 @@ jobs:
 
       - name: Log in to Amazon ECR
         run: |
-          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_URI }}
+          aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin $ECR_BASE_URI
 
       - name: Create GCP Key File
         env:
@@ -39,8 +40,8 @@ jobs:
 
       - name: Tag Docker image
         run: |
-          docker tag $ECR_NAME:latest ${{ secrets.ECR_URI }}:latest
+          docker tag $ECR_NAME:latest $ECR_BASE_URI/$ECR_NAME:latest
 
       - name: Push Docker image to ECR
         run: |
-          docker push ${{ secrets.ECR_URI }}:latest
+          docker push $ECR_BASE_URI/$ECR_NAME:latest
