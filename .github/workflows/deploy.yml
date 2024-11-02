@@ -1,15 +1,16 @@
 name: Deploy to Elastic Beanstalk
 
 on:
-  workflow_run:
-    workflows: ["Deploy to ECR"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
 
 jobs:
-  deploy:
+  push-and-deploy:
     runs-on: ubuntu-latest
     env:
+      ECR_NAME: ${{ vars.ECR_REPOSITORY }}
+      ECR_BASE_URI: ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
       ECR_IMAGE_URI: ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPOSITORY }}:latest
       S3_BUCKET_NAME: elasticbeanstalk-${{ vars.AWS_REGION }}-${{ vars.AWS_ACCOUNT_ID }}
       S3_KEY: "artifact/dockerrun.zip"
@@ -18,7 +19,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -26,11 +26,33 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
+      - name: Log in to Amazon ECR
+        run: |
+          aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin $ECR_BASE_URI
+
+      - name: Create GCP Key File
+        env:
+          GCP_KEY_JSON: ${{ secrets.GCP_KEY_JSON }}
+        run: |
+          echo "$GCP_KEY_JSON" > gcp-key.json
+
+      - name: Build Docker image
+        run: |
+          docker build -t $ECR_NAME .
+
+      - name: Tag Docker image
+        run: |
+          docker tag $ECR_NAME:latest $ECR_IMAGE_URI
+
+      - name: Push Docker image to ECR
+        run: |
+          docker push $ECR_IMAGE_URI
+
       - name: Push dockerrun.zip to S3
         run: |
           zip dockerrun.zip Dockerrun.aws.json
           aws s3 cp dockerrun.zip s3://$S3_BUCKET_NAME/$S3_KEY
-          
+
       - name: Verify S3 Upload
         run: |
           aws s3 ls s3://$S3_BUCKET_NAME/$S3_KEY
@@ -41,7 +63,6 @@ jobs:
             --application-name ${{ vars.EB_APPLICATION_NAME }} \
             --version-label $GITHUB_SHA \
             --source-bundle S3Bucket=$S3_BUCKET_NAME,S3Key=$S3_KEY
-          
 
       - name: Deploy to Elastic Beanstalk Environment
         run: |

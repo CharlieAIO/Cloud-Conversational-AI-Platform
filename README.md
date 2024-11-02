@@ -1,4 +1,4 @@
-## Configuration 
+## Configuration for AWS and GitHub Actions
 
 *First store the following in GitHub Repository variables:*
   - `AWS_ACCESS_KEY_ID`
