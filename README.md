@@ -2,7 +2,7 @@
 
 *First store the following in GitHub Repository variables:*
   - `AWS_ACCESS_KEY_ID`
-  - `AWS_ACCOUNT_ID`
+  - `AWS_REGION`
 
 1. Create IAM User on AWS
    - Give it `AdministratorAccess-AWSElasticBeanstalk` policy

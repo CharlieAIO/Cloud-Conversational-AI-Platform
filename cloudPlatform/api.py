@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, HTTPException, Form, File
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from typing import Optional
 import os
@@ -11,6 +12,15 @@ from .chatgpt import query_gpt
 tmp_file_dir = "/tmp/audio_files"
 app = FastAPI()
 os.makedirs(tmp_file_dir, exist_ok=True)
+
+# Allow all origins, methods, and headers
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],  
+    allow_headers=["*"],  
+)
 
 
 @app.get("/")
@@ -31,8 +41,8 @@ async def query(query: Optional[str] = Form(None), audioFile: Optional[UploadFil
             file_out.write(file_bytes)
 
         transcript = speech_to_text(audio_file_path)
-
+        response = query_gpt(transcript)
         os.remove(audio_file_path)
-        return {"transcript": transcript}
+        return {"response": response}
     else:
         raise HTTPException(status_code=400, detail="No query or audio file provided")

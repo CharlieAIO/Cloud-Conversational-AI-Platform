@@ -32,7 +32,7 @@ def google_cloud_text_to_speech(text, output_file):
         raise Exception("Failed to save output file")
 
 
-def speech_to_text(audio_file_path: str) -> speech.RecognizeResponse:
+def speech_to_text(audio_file_path: str) -> str:
     client = speech.SpeechClient()
 
     with open(audio_file_path, "rb") as audio_file:
