@@ -1,6 +1,7 @@
 from google.cloud import texttospeech, speech
 
 client = texttospeech.TextToSpeechClient()
+speech_client = speech.SpeechClient()
 
 
 def google_cloud_text_to_speech(text, output_file):
@@ -33,8 +34,6 @@ def google_cloud_text_to_speech(text, output_file):
 
 
 def speech_to_text(audio_file_path: str) -> str:
-    client = speech.SpeechClient()
-
     with open(audio_file_path, "rb") as audio_file:
         content = audio_file.read()
 
@@ -46,6 +45,6 @@ def speech_to_text(audio_file_path: str) -> str:
 
     audio = speech.RecognitionAudio(content=content)
 
-    response = client.recognize(config=config, audio=audio)
+    response = speech_client.recognize(config=config, audio=audio)
 
     return response.results[0].alternatives[0].transcript

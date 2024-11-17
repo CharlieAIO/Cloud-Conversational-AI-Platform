@@ -6,14 +6,19 @@
   - `AWS_ACCESS_KEY_ID`
   - `AWS_REGION`
 
-1. Create IAM User on AWS
+1. Create GCP Key
+   - Create a new service account
+   - Ensure it has permission to use text-to-speech and speech-to-text APIs
+   - Create a new key and download it as JSON
+   - Store the key in GitHub Actions Secrets under `GCP_KEY_JSON`
+
+2. Create IAM User on AWS
    - Give it `AdministratorAccess-AWSElasticBeanstalk` policy
    - Give it `AmazonEC2ContainerRegistryFullAccess` policy
    - Create Access Key and Secret Key
    - Store them in GitHub Actions Secrets under `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
 
-
-2. Create Role for Elastic Beanstalk (IAM Instance Profile)
+3. Create Role for Elastic Beanstalk (IAM Instance Profile)
     - Create a new role for EC2
     - Attach `AmazonEC2ContainerRegistryReadOnly` policy to the role
     - Attach `AmazonSSMManagedInstanceCore` policy to the role
@@ -21,18 +26,15 @@
     - Attach `AWSElasticBeanstalkWorkerTier` policy to the role
     - Attach `AWSElasticBeanstalkMulticontainerDocker` policy to the role
 
-
-3. Create ECR Repository
+4. Create ECR Repository
     - Create a new repository in ECR
     - Store the repository name in GitHub Repository variables under `ECR_REPOSITORY`
 
-
-4. Create Elastic Beanstalk Application
+5. Create Elastic Beanstalk Application
     - Create a new Elastic Beanstalk Application
     - Store the application name in GitHub Repository variables under `EB_APPLICATION_NAME`
 
-
-5. Create Elastic Beanstalk Environment
+6. Create Elastic Beanstalk Environment
     - Create a new Elastic Beanstalk Environment
       - Set EC2 Instance Profile to the role created in step 2
       - Set platform to `Docker`
