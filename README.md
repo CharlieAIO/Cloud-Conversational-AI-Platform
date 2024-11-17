@@ -44,3 +44,9 @@
       - Ensure `IMDSv1` is deactivated
       - Set instance type to `t3.micro`
     - Store the environment name in GitHub Repository variables under `EB_ENVIRONMENT_NAME`
+
+7. Configure Dockerrun.aws.json
+    - Edit the json file called `Dockerrun.aws.json`
+    - Add the following content to the file:
+    - Set the `image` field to the ECR repository URI with the tag `latest`
+    - Adjust the port mappings as needed
