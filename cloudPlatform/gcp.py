@@ -20,7 +20,7 @@ def google_cloud_text_to_speech(text, output_file):
             input=synthesis_input, voice=voice, audio_config=audio_config
         )
     except Exception:
-        raise Exception("Failed to synthesize speech")
+        return False
 
     try:
         with open(output_file, "wb") as out:
@@ -29,7 +29,7 @@ def google_cloud_text_to_speech(text, output_file):
         print(f'Audio content written to file "{output_file}"')
         return True
     except Exception:
-        raise Exception("Failed to save output file")
+        return False
 
 
 def speech_to_text(audio_file_path: str) -> str:
