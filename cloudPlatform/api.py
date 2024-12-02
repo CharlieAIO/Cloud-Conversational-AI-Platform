@@ -58,6 +58,6 @@ async def tts(textInput: str = Form(...)):
     output_file = os.path.join(tmp_file_dir, f"{random_id}.mp3")
     response = google_cloud_text_to_speech(textInput, output_file)
     if not response:
-        raise HTTPException(status_code=500, detail="Error synthesizing speech")
+        raise HTTPException(status_code=400, detail="Error synthesizing speech")
 
     return FileResponse(output_file, media_type='audio/mpeg', filename=f"{random_id}.mp3")
