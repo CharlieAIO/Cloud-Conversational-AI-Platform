@@ -4,7 +4,7 @@ client = texttospeech.TextToSpeechClient()
 speech_client = speech.SpeechClient()
 
 
-def google_cloud_text_to_speech(text, output_file):
+def text_to_speech(text, output_file) -> bool:
     try:
         synthesis_input = texttospeech.SynthesisInput(text=text)
 
@@ -33,18 +33,21 @@ def google_cloud_text_to_speech(text, output_file):
         return False
 
 
-def speech_to_text(audio_file_path: str) -> str:
-    with open(audio_file_path, "rb") as audio_file:
-        content = audio_file.read()
+def speech_to_text(audio_file_path: str) -> str or None:
+    try:
+        with open(audio_file_path, "rb") as audio_file:
+            content = audio_file.read()
 
-    config = speech.RecognitionConfig(
-        encoding=speech.RecognitionConfig.AudioEncoding.MP3,
-        sample_rate_hertz=16000,
-        language_code="en-US",
-    )
+        config = speech.RecognitionConfig(
+            encoding=speech.RecognitionConfig.AudioEncoding.MP3,
+            sample_rate_hertz=16000,
+            language_code="en-US",
+        
+        )
 
-    audio = speech.RecognitionAudio(content=content)
+        audio = speech.RecognitionAudio(content=content)
+        response = speech_client.recognize(config=config, audio=audio)
+        return response.results[0].alternatives[0].transcript
+    except Exception:
+        return None
 
-    response = speech_client.recognize(config=config, audio=audio)
-
-    return response.results[0].alternatives[0].transcript

@@ -9,7 +9,7 @@ import os
 
 load_dotenv()
 
-from .gcp import speech_to_text, google_cloud_text_to_speech
+from .gcp import speech_to_text, text_to_speech
 from .chatgpt import query_gpt
 
 tmp_file_dir = "/tmp/audio_files"
@@ -34,6 +34,8 @@ async def root():
 async def query(query: Optional[str] = Form(None), audioFile: Optional[UploadFile] = File(None)):
     if query:
         response = query_gpt(query)
+        if not response:
+            raise HTTPException(status_code=400, detail="Error querying GPT")
         return {"response": response}
     elif audioFile:
         audio_file_path = os.path.join(tmp_file_dir, audioFile.filename)
@@ -44,7 +46,12 @@ async def query(query: Optional[str] = Form(None), audioFile: Optional[UploadFil
             file_out.write(file_bytes)
 
         transcript = speech_to_text(audio_file_path)
+        if not transcript:
+            raise HTTPException(status_code=400, detail="Error transcribing audio")
         response = query_gpt(transcript)
+        if not response:
+            raise HTTPException(status_code=400, detail="Error querying GPT")
+
         os.remove(audio_file_path)
         return {"response": response}
     else:
@@ -56,7 +63,7 @@ async def query(query: Optional[str] = Form(None), audioFile: Optional[UploadFil
 async def tts(textInput: str = Form(...)):
     random_id = str(uuid.uuid4())
     output_file = os.path.join(tmp_file_dir, f"{random_id}.mp3")
-    response = google_cloud_text_to_speech(textInput, output_file)
+    response = text_to_speech(textInput, output_file)
     if not response:
         raise HTTPException(status_code=400, detail="Error synthesizing speech")
 

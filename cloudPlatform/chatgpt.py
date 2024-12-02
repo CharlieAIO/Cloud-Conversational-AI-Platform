@@ -51,5 +51,4 @@ def query_gpt_assistant(prompt: str, assistantId: str):
 
     if response.messages:
         return response.messages[0].content
-    
     return None
