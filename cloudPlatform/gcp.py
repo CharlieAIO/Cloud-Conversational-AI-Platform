@@ -27,7 +27,6 @@ def text_to_speech(text, output_file) -> bool:
         with open(output_file, "wb") as out:
             out.write(response.audio_content)
 
-        print(f'Audio content written to file "{output_file}"')
         return True
     except Exception:
         return False

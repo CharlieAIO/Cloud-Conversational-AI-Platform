@@ -61,10 +61,13 @@ async def query(query: Optional[str] = Form(None), audioFile: Optional[UploadFil
 
 @app.post("/text-to-speech")
 async def tts(textInput: str = Form(...)):
-    random_id = str(uuid.uuid4())
-    output_file = os.path.join(tmp_file_dir, f"{random_id}.mp3")
-    response = text_to_speech(textInput, output_file)
-    if not response:
-        raise HTTPException(status_code=400, detail="Error synthesizing speech")
-
-    return FileResponse(output_file, media_type='audio/mpeg', filename=f"{random_id}.mp3")
+    if textInput:
+        random_id = str(uuid.uuid4())
+        output_file = os.path.join(tmp_file_dir, f"{random_id}.mp3")
+        response = text_to_speech(textInput, output_file)
+        if not response:
+            raise HTTPException(status_code=400, detail="Error synthesizing speech")
+    
+        return FileResponse(output_file, media_type='audio/mpeg', filename=f"{random_id}.mp3")
+    
+    raise HTTPException(status_code=400, detail="No input provided")
