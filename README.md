@@ -3,7 +3,7 @@
 ## Configuration for AWS and GitHub Actions
 
 *First store the following in GitHub Repository variables:*
-  - `AWS_ACCESS_KEY_ID`
+  - `AWS_ACCOUNT_ID`
   - `AWS_REGION`
 
 1. Create GCP Key
