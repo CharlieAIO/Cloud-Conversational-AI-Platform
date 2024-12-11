@@ -6,6 +6,9 @@
   - `AWS_ACCOUNT_ID`
   - `AWS_REGION`
 
+*GitHub Environment Secrets:*
+    - `OPENAI_API_KEY` (e.g. sk-proj--Xx-XXXX_xxxx)
+
 1. Create GCP Key
    - Create a new service account
    - Ensure it has permission to use text-to-speech and speech-to-text APIs
