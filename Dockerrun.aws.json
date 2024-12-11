@@ -1,7 +1,7 @@
 {
   "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "980921737519.dkr.ecr.eu-north-1.amazonaws.com/cloudai-backend:latest",
+    "Name": "980921737519.dkr.ecr.eu-north-1.amazonaws.com/ccaip-test:latest",
     "Update": "true"
   },
   "Ports": [
