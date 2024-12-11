@@ -43,7 +43,7 @@
       - Set platform to `Docker`
       - Set application code to `Sample application`
       - Set environment type to `Single instance`
-      - Set Root volume type to `General Purpose 3 - 40 GiB`
+      - Set Root volume type to `General Purpose 3`
       - Ensure `IMDSv1` is deactivated
       - Set instance type to `t3.micro`
     - Store the environment name in GitHub Repository variables under `EB_ENVIRONMENT_NAME`
